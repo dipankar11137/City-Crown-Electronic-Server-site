@@ -42,7 +42,6 @@ async function run() {
     app.put("/appleProducts/:id", async (req, res) => {
       const id = req.params.id;
       const updateQuantity = req.body;
-      // console.log(updateQuantity);
       const query = { _id: ObjectId(id) };
       const options = { upsert: true };
       const updateDoc = {
@@ -55,6 +54,12 @@ async function run() {
         updateDoc,
         options
       );
+      res.send(result);
+    });
+    // Post apple Products
+    app.post("/appleProducts", async (req, res) => {
+      const newProduct = req.body;
+      const result = await appleProductsCollection.insertOne(newProduct);
       res.send(result);
     });
   } finally {
