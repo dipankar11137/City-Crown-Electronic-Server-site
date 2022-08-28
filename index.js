@@ -62,6 +62,13 @@ async function run() {
       const result = await appleProductsCollection.insertOne(newProduct);
       res.send(result);
     });
+    // Delete Apple Product
+    app.delete("/appleProducts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await appleProductsCollection.deleteOne(query);
+      res.send(result);
+    });
   } finally {
   }
 }
