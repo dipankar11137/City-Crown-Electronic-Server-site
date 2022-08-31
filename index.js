@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+var jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 
@@ -25,6 +26,15 @@ async function run() {
     const appleProductsCollection = client
       .db("city-electronics")
       .collection("apple-products");
+
+    // AUth JWT
+    app.post("/login", async (req, res) => {
+      const user = req.body;
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "1d",
+      });
+      res.send({ accessToken });
+    });
 
     app.get("/appleProducts", async (req, res) => {
       const query = {};
@@ -68,6 +78,15 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const result = await appleProductsCollection.deleteOne(query);
       res.send(result);
+    });
+    // add item identify by email
+    app.get("/appleProductsItem", async (req, res) => {
+      const email = req.query.email;
+      console.log(email);
+      const query = { email: email };
+      const cursor = appleProductsCollection.find(query);
+      const items = await cursor.toArray();
+      res.send(items);
     });
   } finally {
   }
